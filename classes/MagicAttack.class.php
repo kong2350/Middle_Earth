@@ -10,7 +10,7 @@ class MagicAttack
 	  global $conn;
 	  $this->conn=$conn;
 
-  //// Executed only on death of monster due to magic attack
+  	  //// Executed only on demise of monster due to magic attack
 	  if ($magic_attack !== null) {
 		$monster_attacked = $magic_attack;
 
@@ -72,14 +72,14 @@ class MagicAttack
 		$newLevel = 9;
 	     }
 
- $sql = $this->conn->prepare("UPDATE player SET lvl=$newLevel WHERE id = $id");
- $sql->execute();
+  $sql = $this->conn->prepare("UPDATE player SET lvl=$newLevel WHERE id = $id");
+  $sql->execute();
 
   IF ($currentLvl < $newLevel) {
     $hitPts =  $hitPts + 12;
     $sql = $this->conn->prepare("UPDATE player SET hit_points=$hitPts  WHERE id = $id");
     $sql->execute();
- }
+  }
 
 		//// Update on screen for level and hit points
 		$sql_update = $this->conn->prepare("SELECT hit_points, lvl FROM player WHERE id=$id");
@@ -97,7 +97,7 @@ class MagicAttack
 		$_SESSION['num_monsters'] = $_SESSION['num_monsters']-1;
 	}
 
-  ///////////////////////////////////////////////////////////////////////////////////
+  	///////////////////////////////////////////////////////////////////////////////////
 	if ($_SESSION['num_monsters'] == 0) {
 		unset($_SESSION['monsterTeam']);
 
@@ -128,6 +128,6 @@ class MagicAttack
 		}
 	}
 
-}
+  }
 }
 ?>
