@@ -9,7 +9,6 @@ spl_autoload_register(function ($classname) {
 });
 include ('includes/login_check.php');
 include ('includes/core.php');
-echo "boo";
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -22,8 +21,6 @@ echo "boo";
 <body>
 <!--<div align=center><span class=title>MEN & MONSTERS</span></div>-->
 <?php
-
-//
 //////////   initialize session variables
 if (!isset($_SESSION['fight'])){ $_SESSION['fight'] = "over";}
 if (!isset($_SESSION['killed'])) { $_SESSION['killed'] = "";}
@@ -36,20 +33,19 @@ if (!isset($_SESSION['pl_magic_clicked'])) {$_SESSION['pl_magic_clicked'] = arra
 
 $magic_count  = 0;
 
-		?>
+?>
     <script>
    			background("<?php echo $_SESSION['backs']; ?>");
     </script>
-	 <?php
+<?php
 	 
-//////////  Engage in battle
+///// Engage in battle
 if (isset($_POST['melee'])) {
 	new Melee($_SESSION['playerTeam'], $_SESSION['monsterTeam']);
 }
 
-//////////  Create a new player DB entry
+///// Create a new player DB entry
 if (isset($_POST['newName'])) {
-	//echo "newPlayer called";
 	new NewPlayer();
 }
 
@@ -60,19 +56,19 @@ if (isset($_POST['choose_player'])) {
 	
 	$_SESSION['fight'] = "on";
 	while($row = $sql->fetch(PDO::FETCH_ASSOC)) {
-			$id = $row['id'];
-			$n = $row['ch_name'];
-			$t = $row['type'];
-			$r = $row['race'];
-			$hp = $row['hit_points'];
-			$o = $row['offense'];
-			$d = $row['defense'];
-			$w = $row['weapon'];
-			$m = $row['magic'];
-			$g = $row['gold'];
-			$lvl = $row['lvl'];
-			$exp_pts = $row['exp_pts'];
-		}
+		$id = $row['id'];
+		$n = $row['ch_name'];
+		$t = $row['type'];
+		$r = $row['race'];
+		$hp = $row['hit_points'];
+		$o = $row['offense'];
+		$d = $row['defense'];
+		$w = $row['weapon'];
+		$m = $row['magic'];
+		$g = $row['gold'];
+		$lvl = $row['lvl'];
+		$exp_pts = $row['exp_pts'];
+	}
 	$_SESSION['playerSess'] = new Player($id, $n,$t,$r,$hp,$o,$d,$w,$m,$g, $lvl, $exp_pts);
 	new PlayerTeam($_SESSION['playerSess']);	
 }
@@ -87,7 +83,6 @@ if (!isset($_SESSION['monstSess']) && ($_SESSION['fight'] == "on")){
 		$monster_lvl = 8;
 	}
 	
-        
 	for ($i = 0; $i < $_SESSION['num_monsters']; $i++){
 		$monst = rand(1, $monster_lvl );
 
@@ -175,7 +170,7 @@ if (isset($_POST['pl_clicked'])) {
 <form id="main_form" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
 <?php
 ////////////////////////////////////////////////
-////Display game field///////////////////////////
+//// Display game field ////////////////////////
 ////////////////////////////////////////////////
 if($_SESSION['fight'] == "on") {
 	echo "<table class=stats width=100%><tr><td><span class=body_lg><b>Monsters</b></span> <span class=body> - Total Slain ". $_SESSION['totalSlain']."</span></td></tr></table>";
@@ -193,9 +188,7 @@ if($_SESSION['fight'] == "on") {
 		echo "</span></td>";
 	}
 	echo "</tr></table></center>";
-
 	echo "<table class=stats width=100%><tr><td><span class=body_lg><b>Players</b></span> <span class=body align=center> - Level ". $_SESSION['level']."</span></td></tr></table>";
-
 	echo "<div align=center id=player_stats><table border=0 cellspacing=6 height=150><tr>";
 	
 	
@@ -253,7 +246,7 @@ if($_SESSION['fight'] == "on") {
     				echo "</select>";
     			$magic_count++;
 					
-}
+		}
 				}	
 				echo "</td>";
 			}
@@ -285,8 +278,7 @@ if($_SESSION['fight'] == "on") {
 		
 		$totalChars = $sql_team->rowcount();
 		$_SESSION['totalChars'] = $sql_team->rowcount();
-		//echo "numplayers = " .$_SESSION['num_players'] ;	
-		//echo "totalChars = " .$_SESSION['totalChars'] ;
+
 		if ($totalChars  > $_SESSION['num_players'])  {
 			 echo "<span class=body><b>Add character to  " .$_SESSION['name'] ."'s team:<br><select name='player'>";
 		    while($row = $sql_team->fetch(PDO::FETCH_ASSOC)) {
@@ -311,7 +303,7 @@ if($_SESSION['fight'] == "on") {
 <?php
 
 	if ($totalChars  < 10) {
-		/////// Create a character
+		//// Create a character
 		$sql_ch_type = $conn->prepare("SELECT type_id, type FROM ch_type ORDER BY type");
 		$sql_ch_type->execute();
 		$sql_race = $conn->prepare("SELECT img, race FROM race ORDER BY race");
@@ -336,16 +328,16 @@ if($_SESSION['fight'] == "on") {
 		echo "<br>Race <select name=race>";
 		while($row = $sql_race->fetch(PDO::FETCH_ASSOC)) {
 		        echo "<option value='". $row['img'] ."'>".$row['race']. "</option>";
-		    }
-		    echo "</select>";
+	        }
+	        echo "</select>";
 		
 		echo "<br>Weapon <select name=weapon>";
 		while($row = $sql_weapon->fetch(PDO::FETCH_ASSOC)) {
 		        echo "<option value='". $row['w_id'] ."'>".$row['type']. "</option>";
-		    }
-		    echo "</select>";
+		}
+		echo "</select>";
 		
-		 echo "<div id=cleric_drop><br>Magic <select name=cleric_magic >";
+		echo "<div id=cleric_drop><br>Magic <select name=cleric_magic >";
 		while($row = $sql_magic_cleric->fetch(PDO::FETCH_ASSOC)) {
 		        echo "<option value='". $row['mag_id'] ."'>".$row['name']. "</option>";
 		    }
@@ -354,8 +346,8 @@ if($_SESSION['fight'] == "on") {
 		echo "<div id=magic_drop><br>Magic <select name=sorc_magic >";
 		while($row = $sql_magic_sorc->fetch(PDO::FETCH_ASSOC)) {
 		        echo "<option value='". $row['mag_id'] ."'>".$row['name']. "</option>";
-		    }
-		    echo "</select></div>";
+		}
+		echo "</select></div>";
 		    
 		
 		echo "</span><br>";
