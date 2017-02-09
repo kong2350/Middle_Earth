@@ -7,11 +7,11 @@ class MagicAttack
 
   public function __construct ($playerTeam, $monsterTeam, $magic_attack) {
 
-  global $conn;
-  $this->conn=$conn;
+	  global $conn;
+	  $this->conn=$conn;
 
-  //// Only called on death of monster with magic
-	if ($magic_attack !== null) {
+  //// Executed only on death of monster due to magic attack
+	  if ($magic_attack !== null) {
 		$monster_attacked = $magic_attack;
 
 		//// update DB for hitpoints and gold distrubution
@@ -37,58 +37,59 @@ class MagicAttack
 			$sql->execute();
 
 			//// Stored procedure call to adjust player level
-			/*$sql_stored = 'CALL adjustLevel(:id)';
-    		$stmt = $conn->prepare($sql_stored);
+			/* $sql_stored = 'CALL adjustLevel(:id)';
+    			$stmt = $conn->prepare($sql_stored);
 
-    		$stmt->bindParam(':id', $id, PDO::PARAM_INT);
+    			$stmt->bindParam(':id', $id, PDO::PARAM_INT);
    			$stmt->execute();
-    		$stmt->closeCursor();*/
+    			$stmt->closeCursor(); */
 
       $sql = $this->conn->prepare("SELECT exp_pts, lvl, hit_points FROM player WHERE id = $id");
       $sql->execute();
 
       $row = $sql->fetch(PDO::FETCH_ASSOC);
-    	$expPts = $row["exp_pts"];
-    	$currentLvl = $row["lvl"];
-    	$hitPts = $row["hit_points"];
+      $expPts = $row["exp_pts"];
+      $currentLvl = $row["lvl"];
+      $hitPts = $row["hit_points"];
 
-    IF ($expPts < 1000) {
-     $newLevel = 1;
-     } ELSEIF ($expPts  >= 1000 && $expPts  <= 2999) {
-        $newLevel = 2;
-     } ELSEIF ($expPts  >= 3000 && $expPts  <= 5999)  {
-        $newLevel = 3;
-     } ELSEIF ($expPts  >= 6000 && $expPts  <= 9999)  {
-        $newLevel = 4;
-     } ELSEIF ($expPts  >= 10000 && $expPts  <= 14999)  {
-        $newLevel = 5;
-     } ELSEIF ($expPts  >= 15000 && $expPts  <= 20999)  {
-        $newLevel = 6;
-     } ELSEIF ($expPts  >= 21000 && $expPts  <= 27999)  {
-        $newLevel = 7;
-     } ELSEIF ($expPts  >= 28000 && $expPts  <= 35999)  {
-        $newLevel = 8;
-     } ELSEIF ($expPts  >= 36000 && $expPts  <= 44999)  {
-        $newLevel = 9;
-     }
+     IF ($expPts < 1000) {
+	     $newLevel = 1;
+	     } ELSEIF ($expPts  >= 1000 && $expPts  <= 2999) {
+		$newLevel = 2;
+	     } ELSEIF ($expPts  >= 3000 && $expPts  <= 5999)  {
+		$newLevel = 3;
+	     } ELSEIF ($expPts  >= 6000 && $expPts  <= 9999)  {
+		$newLevel = 4;
+	     } ELSEIF ($expPts  >= 10000 && $expPts  <= 14999)  {
+		$newLevel = 5;
+	     } ELSEIF ($expPts  >= 15000 && $expPts  <= 20999)  {
+		$newLevel = 6;
+	     } ELSEIF ($expPts  >= 21000 && $expPts  <= 27999)  {
+		$newLevel = 7;
+	     } ELSEIF ($expPts  >= 28000 && $expPts  <= 35999)  {
+		$newLevel = 8;
+	     } ELSEIF ($expPts  >= 36000 && $expPts  <= 44999)  {
+		$newLevel = 9;
+	     }
 
  $sql = $this->conn->prepare("UPDATE player SET lvl=$newLevel WHERE id = $id");
  $sql->execute();
 
   IF ($currentLvl < $newLevel) {
-  $hitPts =  $hitPts + 12;
+    $hitPts =  $hitPts + 12;
     $sql = $this->conn->prepare("UPDATE player SET hit_points=$hitPts  WHERE id = $id");
-     $sql->execute();
+    $sql->execute();
  }
 
-			//// Update on screen for level and hit points
-			$sql_update = $this->conn->prepare("SELECT hit_points, lvl FROM player WHERE id=$id");
-			$sql_update->execute();
-			while($row = $sql_update->fetch(PDO::FETCH_ASSOC)) {
-				$playerTeam[$i]->hit_points = $row['hit_points'];
-        $playerTeam[$i]->lvl = $row['lvl'];
-    		 }
-		}
+		//// Update on screen for level and hit points
+		$sql_update = $this->conn->prepare("SELECT hit_points, lvl FROM player WHERE id=$id");
+		$sql_update->execute();
+
+		while($row = $sql_update->fetch(PDO::FETCH_ASSOC)) {
+		   $playerTeam[$i]->hit_points = $row['hit_points'];
+		   $playerTeam[$i]->lvl = $row['lvl'];
+	 	}
+	}
 
 		//// delete monster, reset array index, deduct team count
 		unset($_SESSION['monsterTeam'][$monster_attacked]);
