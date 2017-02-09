@@ -2,16 +2,14 @@
 
 class Melee
 {
-	public $update;
-	public $conn;
-
-//public function __construct ($playerTeam, $monsterTeam, $magic_attack) {
-public function __construct ($playerTeam, $monsterTeam) {
+  public $update;
+  public $conn;
 	
-	 global $conn;
+  public function __construct ($playerTeam, $monsterTeam) {
+	
+    global $conn;
     $this->conn=$conn;
-
-			
+	
 	  /////  inflict damage on players	through melee
 		for ($i = 0; $i < $_SESSION['num_monsters']; $i++){
 			
@@ -26,7 +24,7 @@ public function __construct ($playerTeam, $monsterTeam) {
 			echo "<div id=skull align=center><img src=img/skull.png height=350><br><table><tr><td bgcolor=#333><span class=body_wh_lg><b>";
 			echo $_SESSION['killed'];
 			echo "<div id=attack_flash align=center></div>";
-	echo "<script>showFlash();</script>";
+	                echo "<script>showFlash();</script>";
 			echo "</b></span></td></tr></table></div>";
 			echo "<script>showSkull();</script>";
 			$id = $playerTeam[$player_attacked]->id;
@@ -51,7 +49,7 @@ public function __construct ($playerTeam, $monsterTeam) {
 		$monster_attacked = rand(0, $_SESSION['num_monsters']-1);
    		$monsterTeam[$monster_attacked]->hit_points -= $damage;
 
-	   /////  check pulse of monsters - update DB for hitpoints and gold distrubution
+	        /////  check pulse of monsters - update DB for hitpoints and gold distrubution
 		if($monsterTeam[$monster_attacked]->hit_points <=0){
 			$_SESSION['totalSlain']++;
 			$_SESSION['killed'] = "<b>You smote the " . $monsterTeam[$monster_attacked]->race. "!</b><br>";
@@ -79,33 +77,29 @@ public function __construct ($playerTeam, $monsterTeam) {
 				///////////Stored procedure call to adjust player level
 				/*
 				$sql_stored = 'CALL adjustLevel(:id)';
-    			$stmt = $conn->prepare($sql_stored);
- 
-    			$stmt->bindParam(':id', $id, PDO::PARAM_INT);
-   				$stmt->execute();
-    			$stmt->closeCursor();*/
-    			
-    			
-    			//Stored procedure replacement
+				$stmt = $conn->prepare($sql_stored);
+
+				$stmt->bindParam(':id', $id, PDO::PARAM_INT);
+					$stmt->execute();
+				$stmt->closeCursor();*/
+				//Stored procedure replacement
     			
      
     $sql = $this->conn->prepare("SELECT exp_pts, lvl, hit_points FROM player WHERE id = $id");
     $sql->execute();
     
     $row = $sql->fetch(PDO::FETCH_ASSOC);
-    
-    
-    	$expPts = $row["exp_pts"];
-    	$currentLvl = $row["lvl"];
-    	$hitPts = $row["hit_points"];
+    $expPts = $row["exp_pts"];
+    $currentLvl = $row["lvl"];
+    $hitPts = $row["hit_points"];
     
     IF ($expPts < 1000) { 
      $newLevel = 1;
      } ELSEIF ($expPts  >= 1000 && $expPts  <= 2999) {
         $newLevel = 2;
-    } ELSEIF ($expPts  >= 3000 && $expPts  <= 5999)  {
+     } ELSEIF ($expPts  >= 3000 && $expPts  <= 5999)  {
         $newLevel = 3;
-    } ELSEIF ($expPts  >= 6000 && $expPts  <= 9999)  {
+     } ELSEIF ($expPts  >= 6000 && $expPts  <= 9999)  {
         $newLevel = 4;
      } ELSEIF ($expPts  >= 10000 && $expPts  <= 14999)  {
         $newLevel = 5;  
@@ -117,26 +111,26 @@ public function __construct ($playerTeam, $monsterTeam) {
         $newLevel = 8;   
      } ELSEIF ($expPts  >= 36000 && $expPts  <= 44999)  {
         $newLevel = 9;      
-    }
+     }
     
- $sql = $this->conn->prepare("UPDATE player SET lvl=$newLevel WHERE id = $id");
+   $sql = $this->conn->prepare("UPDATE player SET lvl=$newLevel WHERE id = $id");
    $sql->execute();
    
   IF ($currentLvl < $newLevel) { 
   $hitPts =  $hitPts + 12;
     $sql = $this->conn->prepare("UPDATE player SET hit_points=$hitPts  WHERE id = $id");
-     $sql->execute();
- }
+    $sql->execute();
+  }
 
 
-				////////// Update on screen stat adjustmen for level and hit points
-				$sql_update = $this->conn->prepare("SELECT hit_points, lvl FROM player WHERE id=$id");	
-				$sql_update->execute();
-				while($row = $sql_update->fetch(PDO::FETCH_ASSOC)) {
-					$playerTeam[$i]->hit_points = $row['hit_points'];
-        			$playerTeam[$i]->lvl = $row['lvl'];
-    		 	}
+		////////// Update on screen stat adjustmen for level and hit points
+		$sql_update = $this->conn->prepare("SELECT hit_points, lvl FROM player WHERE id=$id");	
+		$sql_update->execute();
+		while($row = $sql_update->fetch(PDO::FETCH_ASSOC)) {
+			$playerTeam[$i]->hit_points = $row['hit_points'];
+		$playerTeam[$i]->lvl = $row['lvl'];
 		}
+	}
 		
 		// delete monster, reset array index, deduct team count
 		unset($_SESSION['monsterTeam'][$monster_attacked]);
